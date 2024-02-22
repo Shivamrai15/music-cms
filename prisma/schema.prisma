@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String       @unique
+  password     String
+  likedSongs   LikedSongs[]
+  followingIds String[]     @db.ObjectId
+  following    Artist[]     @relation(fields: [followingIds], references: [id])
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Album {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  image   String
+  color   String
+  release DateTime
+  songs   Song[]
+
+  @@unique([id, image])
+}
+
+model Song {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  image     String
+  length    Int
+  lyrics    Json?
+  albumId   String   @db.ObjectId
+  album     Album    @relation(fields: [albumId, image], references: [id, image])
+  artistIds String[] @db.ObjectId
+  artists   Artist[] @relation(fields: [artistIds], references: [id])
+
+  @@index([albumId, artistIds])
+}
+
+model LikedSongs {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  songId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([songId, userId])
+  @@index([userId])
+}
+
+model Artist {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  image       String
+  thumbnail   String
+  about       String   @db.String
+  songIds     String[] @db.ObjectId
+  songs       Song[]   @relation(fields: [songIds], references: [id])
+  followerIds String[] @db.ObjectId
+  followers   User[]   @relation(fields: [followerIds], references: [id])
+}
+
+model PlayList {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  image     String?
+  songIds   String[] @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
