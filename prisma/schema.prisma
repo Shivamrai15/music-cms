@@ -28,20 +28,21 @@ model Album {
   songs   Song[]
 
   @@unique([id, image])
+  @@index([name])
 }
 
 model Song {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   image     String
-  length    Int
-  lyrics    Json?
+  url       String
+  duration  Int
   albumId   String   @db.ObjectId
-  album     Album    @relation(fields: [albumId, image], references: [id, image])
+  album     Album    @relation(fields: [albumId], references: [id])
   artistIds String[] @db.ObjectId
   artists   Artist[] @relation(fields: [artistIds], references: [id])
 
-  @@index([albumId, artistIds])
+  @@index([albumId, name])
 }
 
 model LikedSongs {
@@ -60,12 +61,14 @@ model Artist {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   image       String
-  thumbnail   String
+  thumbnail   String?
   about       String   @db.String
   songIds     String[] @db.ObjectId
   songs       Song[]   @relation(fields: [songIds], references: [id])
   followerIds String[] @db.ObjectId
   followers   User[]   @relation(fields: [followerIds], references: [id])
+
+  @@index([name])
 }
 
 model PlayList {
