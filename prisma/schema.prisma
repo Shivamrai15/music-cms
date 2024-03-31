@@ -12,11 +12,33 @@ model User {
   name         String
   email        String       @unique
   password     String
+  history      History[]
+  accounts     Account[]
+  playlists    PlayList[]
   likedSongs   LikedSongs[]
   followingIds String[]     @db.ObjectId
   following    Artist[]     @relation(fields: [followingIds], references: [id])
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.ObjectId
+  access_token      String? @db.ObjectId
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.ObjectId
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
 model Album {
@@ -72,10 +94,46 @@ model Artist {
 }
 
 model PlayList {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   image     String?
-  songIds   String[] @db.ObjectId
+  userId    String         @db.ObjectId
+  user      User           @relation(fields: [userId], references: [id])
+  songs     PlaylistSong[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([userId, name])
+}
+
+model PlaylistSong {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  songId     String   @db.ObjectId
+  playlistId String   @db.ObjectId
+  playlist   PlayList @relation(fields: [playlistId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([songId, playlistId])
+}
+
+model History {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  songId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model SongPlays {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  songId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([songId, userId])
 }

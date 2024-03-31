@@ -1,8 +1,8 @@
 export default async function Home() {
 
     return (
-        <div>
-            Landing Page
+        <div className="font-semibold mt-10 text-center">
+            Admin Panel
         </div>
     );
 }

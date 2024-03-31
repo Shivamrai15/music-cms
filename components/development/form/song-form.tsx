@@ -31,6 +31,7 @@ import { SongSchema } from "@/schema/song.schema";
 import { Album, Artist } from "@prisma/client";
 import { SongUpload } from "../utils/song-upload";
 import { X } from "lucide-react";
+import { ImageUpload } from "../utils/image-upload";
 
 interface SongFormProps {
     artists : Artist[];
@@ -162,11 +163,29 @@ export const SongForm = ({
                     />
                     <FormField
                         control={form.control}
+                        name="image"
+                        render={({field})=>(
+                            <FormItem>
+                                <FormLabel>Image</FormLabel>
+                                <FormControl>
+                                    <ImageUpload
+                                            value={field.value ? [field.value] : []}
+                                            disabled = {loading}
+                                            onChange={(url) => field.onChange(url)}
+                                            onRemove={() => field.onChange("")}
+                                        />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="artistIds"
                         render={({field})=>(
                             <FormItem>
                                 <FormLabel className="mr-4">Artist</FormLabel>
-                                    <div className="flex gap-4">
+                                    <div className="flex gap-4 flex-wrap">
                                         {
                                             field.value.map((id)=>(
                                                 <div key={id} className="flex gap-2 items-center px-4 py-2 bg-gray-100 rounded-md ">
