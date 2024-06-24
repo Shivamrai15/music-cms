@@ -12,11 +12,12 @@ export async function POST ( req: Request ) {
             return new NextResponse("Invalid Fields", {status : 401});
         }
 
-        const { artistIds, ...songData } = validatedData.data;
+        const { artistIds, name, ...songData } = validatedData.data;
 
         const song = await db.song.create({
             data : {
                 ...songData,
+                name : name.trim(),
                 artists : {
                     connect : artistIds.map(id => ({ id }))
                 }

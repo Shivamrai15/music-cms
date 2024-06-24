@@ -10,7 +10,7 @@ export async function POST ( req: Request ) {
 
         const album  = await db.album.create({
             data : {
-                name,
+                name : name.trim(),
                 image,
                 color,
                 release : new Date(release)

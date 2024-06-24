@@ -13,10 +13,13 @@ export async function POST ( req : Request ) {
             return new NextResponse("Fields are required", {status : 400});
         }
 
-        const data = validatedData.data
+        const { name, ...data} = validatedData.data
 
         const artist = await db.artist.create({
-            data        
+            data : {
+                name : name.trim(),
+                ...data
+            }
         });
 
         return NextResponse.json({success : true});

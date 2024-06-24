@@ -25,6 +25,26 @@ const LayoutPage = ({
                 >
                     Song
                 </Link>
+                <Link
+                    href="/genre"
+                >
+                    Genre
+                </Link>
+                <Link
+                    href="/lyrics"
+                >
+                    Lyrics
+                </Link>
+                <Link
+                    href="/update"
+                >
+                    Update
+                </Link>
+                <Link
+                    href="/genre-songs"
+                >
+                    Genre Songs
+                </Link>
             </nav>
             <main className="h-full">
                 {children}
