@@ -3,12 +3,22 @@
 import { db } from "@/lib/db";
 
 export const getSongs = async () => {
+
+    const ly = await db.lyrics.findMany({
+        select : {
+            songId : true
+        }
+    });
+    
+
+    const ids = ly.map((id)=>id.songId);
+
     const songs = await db.song.findMany({
-        // where : {
-        //     name : {
-        //         startsWith : "M"
-        //     }
-        // },
+        where : {
+            id : {
+                notIn : ids
+            }
+        },
         orderBy : {
             name : "asc"
         }
@@ -16,4 +26,28 @@ export const getSongs = async () => {
 
     return songs;
 
+}
+
+
+export const getPreProcessSongs = async () => {
+    try {
+        
+        const songs = await db.song.findMany({
+            where : {
+                url : {
+                    not : {
+                        endsWith : "m3u8"
+                    }
+                }
+            },
+            include : {
+                artists : true
+            }
+        });
+
+        return songs;
+
+    } catch (error) {
+        return [];
+    }
 }

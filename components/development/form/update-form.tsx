@@ -1,7 +1,7 @@
 "use client";
 
 import * as z from "zod";
-import { Song } from "@prisma/client";
+import { Album, Label } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { UpdateSchema } from "@/schema/update.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,14 +27,15 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Image from "next/image";
-import { SongUpload } from "../utils/song-upload";
 
 interface UpdateFormProps {
-    songs : Song[]
+    albums : Album[];
+    labels : Label[]; 
 }
 
 export const UpdateForm = ({
-    songs
+    albums,
+    labels
 } : UpdateFormProps ) => {
 
     const [loading, setLoading] = useState(false);
@@ -44,7 +45,7 @@ export const UpdateForm = ({
         resolver : zodResolver(UpdateSchema),
         defaultValues : {
             id : "",
-            url : ""
+            labelId : ""
         }
     });
 
@@ -52,8 +53,7 @@ export const UpdateForm = ({
         try {
             
             await axios.post("/api/v1/update", values);
-            toast.success("Successfully Updated")
-            form.reset();
+            toast.success("Successfully Updated");
         } catch (error) {
             console.error(error);
             toast.error("Something went wrong");
@@ -74,21 +74,21 @@ export const UpdateForm = ({
                         name="id"
                         render={({field})=>(
                             <FormItem>
-                                <FormLabel className="mr-4">Song</FormLabel>
+                                <FormLabel className="mr-4">Album</FormLabel>
                                     <Select onValueChange={(value)=>{
                                         field.onChange(value)
-                                        setImage(songs.find((item)=> item.id===value)?.image || "")
+                                        setImage(albums.find((item)=> item.id===value)?.image || "")
                                     }} defaultValue={field.value}>
                                         <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select a song" />
+                                            <SelectValue placeholder="Select an album" />
                                         </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
                                             {
-                                                songs.map((song)=>(
-                                                    <SelectItem key={song.id} value={song.id}>
-                                                        {song.name}
+                                                albums.map((album)=>(
+                                                    <SelectItem key={album.id} value={album.id}>
+                                                        {album.name}
                                                     </SelectItem>
                                                 ))
                                             }
@@ -100,15 +100,28 @@ export const UpdateForm = ({
                     />
                     <FormField
                         control={form.control}
-                        name="url"
+                        name="labelId"
                         render={({field})=>(
                             <FormItem>
-                                <FormLabel>Song</FormLabel>
-                                <FormControl>
-                                    <SongUpload
-                                        onChange={(url) => field.onChange(url)}
-                                    />
-                                </FormControl>
+                                <FormLabel className="mr-4">Label</FormLabel>
+                                    <Select onValueChange={(value)=>{
+                                        field.onChange(value)
+                                    }} defaultValue={field.value}>
+                                        <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a label" />
+                                        </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {
+                                                labels.map((label)=>(
+                                                    <SelectItem key={label.id} value={label.id}>
+                                                        {label.name}
+                                                    </SelectItem>
+                                                ))
+                                            }
+                                        </SelectContent>
+                                    </Select>
                                 <FormMessage/>
                             </FormItem>
                         )}

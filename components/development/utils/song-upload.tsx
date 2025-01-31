@@ -32,7 +32,7 @@ export const SongUpload = ({
     }
 
     return (
-        <div>
+        <div className='w-full'>
             <MultiFileDropzone
                 value={fileStates}
                 onChange={(files) => {

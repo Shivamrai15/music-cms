@@ -22,7 +22,22 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-  } from "@/components/ui/select";
+} from "@/components/ui/select";
+
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,8 +45,9 @@ import { toast } from "sonner";
 import { SongSchema } from "@/schema/song.schema";
 import { Album, Artist } from "@prisma/client";
 import { SongUpload } from "../utils/song-upload";
-import { X } from "lucide-react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 import { ImageUpload } from "../utils/image-upload";
+import { cn } from "@/lib/utils";
 
 interface SongFormProps {
     artists : Artist[];
@@ -80,7 +96,7 @@ export const SongForm = ({
     return (
         <Form {...form}>
             <form
-                className="space-y-6 max-w-md w-full"
+                className="space-y-10 max-w-md w-full"
                 onSubmit={form.handleSubmit(handleForm)}
             >
                 <div className="space-y-3">
@@ -138,25 +154,58 @@ export const SongForm = ({
                         render={({field})=>(
                             <FormItem>
                                 <FormLabel className="mr-4">Album</FormLabel>
-                                    <Select onValueChange={(value)=>{
-                                        field.onChange(value);
-                                        form.setValue("image", albums.find((album)=>album.id===value)?.image|| "");
-                                    }} defaultValue={field.value}>
+                                <Popover>
+                                    <PopoverTrigger asChild>
                                         <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select an album" />
-                                        </SelectTrigger>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                className={cn(
+                                                    "w-full justify-between",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {field.value
+                                                    ? albums.find(
+                                                        (album) => album.id === field.value
+                                                    )?.name
+                                                    : "Select Album"}
+                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
                                         </FormControl>
-                                        <SelectContent>
-                                            {
-                                                albums.map((album)=>(
-                                                    <SelectItem key={album.id} value={album.id}>
-                                                        {album.name}
-                                                    </SelectItem>
-                                                ))
-                                            }
-                                        </SelectContent>
-                                    </Select>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full p-0">
+                                    <Command>
+                                        <CommandInput placeholder="Search Albums..." />
+                                        <CommandList>
+                                        <CommandEmpty>No Album found.</CommandEmpty>
+                                        <CommandGroup>
+                                            {albums.map((album) => (
+                                            <CommandItem
+                                                    value={album.name.toLowerCase()}
+                                                    className="w-full"
+                                                    key={album.id}
+                                                    onSelect={() => {
+                                                    form.setValue("albumId", album.id);
+                                                    form.setValue("image", album.image);
+                                                }}
+                                            >
+                                                <Check
+                                                    className={cn(
+                                                        "mr-2 h-4 w-4",
+                                                        album.id === field.value
+                                                        ? "opacity-100"
+                                                        : "opacity-0"
+                                                    )}
+                                                />
+                                                {album.name}
+                                            </CommandItem>
+                                            ))}
+                                        </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                    </PopoverContent>
+                                </Popover>
                                 <FormMessage/>
                             </FormItem>
                         )}
@@ -201,22 +250,53 @@ export const SongForm = ({
                                             ))
                                         }
                                     </div>
-                                    <Select onValueChange={(value)=>{field.onChange([...field.value, value]); console.log(field.value) }} >
+                                    <Popover>
+                                        <PopoverTrigger asChild>
                                         <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select artist" />
-                                        </SelectTrigger>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                className={cn(
+                                                    "w-full justify-between",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                                >
+                                                    Select Artist
+                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
                                         </FormControl>
-                                        <SelectContent>
-                                            {
-                                                artists.map((artist)=>(
-                                                    <SelectItem key={artist.id} value={artist.id}>
-                                                        {artist.name}
-                                                    </SelectItem>
-                                                ))
-                                            }
-                                        </SelectContent>
-                                    </Select>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-full p-0">
+                                        <Command className="w-full">
+                                            <CommandInput placeholder="Search Artists..." />
+                                            <CommandList>
+                                            <CommandEmpty>No language found.</CommandEmpty>
+                                            <CommandGroup className="w-full" >
+                                                {artists.map((artist) => (
+                                                <CommandItem
+                                                    value={artist.name.toLowerCase()}
+                                                    key={artist.id}
+                                                    onSelect={() => {
+                                                        field.onChange([...field.value, artist.id]);
+                                                    }}
+                                                    className="w-full"
+                                                >
+                                                    <Check
+                                                        className={cn(
+                                                            "mr-2 h-4 w-4",
+                                                            field.value.includes(artist.id)
+                                                            ? "opacity-100"
+                                                            : "opacity-0"
+                                                    )}
+                                                    />
+                                                    {artist.name}
+                                                </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                            </CommandList>
+                                        </Command>
+                                        </PopoverContent>
+                                    </Popover>
                                 <FormMessage/>
                             </FormItem>
                         )}

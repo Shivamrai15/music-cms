@@ -11,14 +11,14 @@ export async function POST ( req : Request ) {
             return new NextResponse("Invalid fields", { status:401 });
         }
 
-        const { id, url } = validatedData.data;
+        const { id, labelId } = validatedData.data;
 
-        await db.song.update({
+        await db.album.update({
             where : {
                 id 
             }, 
             data : {
-                url
+                labelId
             }
         });
 

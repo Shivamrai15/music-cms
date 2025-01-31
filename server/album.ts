@@ -16,3 +16,22 @@ export const getAllAlbums = async() => {
         return [];
     }
 }
+
+
+export const getAllAlbumsWithoutLabel = async () => {
+    try {
+        
+        const albums = await db.album.findMany({
+            where : {
+                label : null
+            },
+            orderBy : {
+                name : "asc"
+            }
+        });
+        return albums
+
+    } catch (error) {
+        return [];
+    }
+}

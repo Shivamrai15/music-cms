@@ -9,7 +9,7 @@ const LayoutPage = ({
 } : LayoutPageProps ) => {
     return (
         <div>
-            <nav className="h-20 w-full flex items-center justify-center gap-x-4">
+            <nav className="h-20 w-full flex items-center justify-center gap-x-5">
                 <Link
                     href="/artist"
                 >
@@ -24,6 +24,11 @@ const LayoutPage = ({
                     href="/song"
                 >
                     Song
+                </Link>
+                <Link
+                    href="/label"
+                >
+                    Label
                 </Link>
                 <Link
                     href="/genre"
@@ -44,6 +49,16 @@ const LayoutPage = ({
                     href="/genre-songs"
                 >
                     Genre Songs
+                </Link>
+                <Link
+                    href="/preprocess"
+                >
+                    Pre Process
+                </Link>
+                <Link
+                    href="/ad"
+                >
+                    Ad
                 </Link>
             </nav>
             <main className="h-full">
