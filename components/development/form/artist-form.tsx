@@ -19,11 +19,13 @@ import { ImageUpload } from "../utils/image-upload";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 
 export const ArtistForm = () => {
 
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
     
     const form  = useForm<z.infer<typeof ArtistSchema>>({
         resolver : zodResolver(ArtistSchema),
@@ -44,6 +46,7 @@ export const ArtistForm = () => {
             await axios.post("/api/v1/artist", values);
             toast.success("Artist has been added");
             form.reset();
+            router.refresh();
         } catch (error) {
             console.error(error);
             toast.error("Something went wrong");

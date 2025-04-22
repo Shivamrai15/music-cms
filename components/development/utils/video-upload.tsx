@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -5,21 +6,21 @@ import { useEffect, useState } from "react";
 import { CldUploadWidget } from 'next-cloudinary';
 
 import { Button } from "@/components/ui/button";
-import { ImagePlusIcon, Trash } from "lucide-react";
+import { VideotapeIcon, Trash } from "lucide-react";
 
-interface ImageUploadProps {
+interface VideoUploadProps {
     value : string[];
     disabled : boolean;
     onChange : (value : string) => void;
     onRemove : (value : string) => void;
 }
 
-export const ImageUpload = ({
+export const VideoUpload = ({
     value,
     disabled,
     onChange,
     onRemove
-} : ImageUploadProps) => {
+} : VideoUploadProps) => {
 
     const [isMounted, setIsMounted] = useState(false);
 
@@ -55,11 +56,9 @@ export const ImageUpload = ({
                                     <Trash className="h-4 w-4"/>
                                 </Button>
                             </div>
-                            <Image
-                                fill
-                                className="object-cover"
-                                alt="Image"
+                            <video
                                 src={url}
+                                className="w-full h-full object-cover rounded-md"
                             />
                         </div>
                     ))
@@ -69,11 +68,9 @@ export const ImageUpload = ({
                 onUpload={onUpload}
                 uploadPreset="zmfxcswd"
                 options={{
-                    maxFiles: 1,
-                    maxFileSize: 1000000,
-                    resourceType: 'image',
-                    clientAllowedFormats: ['png', 'jpg', 'jpeg', 'avif', 'webp'],
-                }}
+                    maxFiles:1,
+                    resourceType: "video",
+                }} 
             >
                 { ({open}) => {
                     const onClick = ()=>{
@@ -87,8 +84,8 @@ export const ImageUpload = ({
                             variant="secondary"
                             className="w-full"
                         >
-                            <ImagePlusIcon className="h-4 w-4 mr-2" />
-                            Upload an Image 
+                            <VideotapeIcon className="h-4 w-4 mr-2" />
+                            Upload a Video 
                         </Button>
                     )
                 }}

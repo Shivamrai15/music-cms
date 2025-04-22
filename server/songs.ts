@@ -51,3 +51,16 @@ export const getPreProcessSongs = async () => {
         return [];
     }
 }
+
+
+export const getSongsWithoutEmbeddings = async () => {
+    
+        const songs = await db.song.findMany({
+            where : {
+                embedding : {
+                    is : null
+            }
+        }});
+        
+        return songs;
+}

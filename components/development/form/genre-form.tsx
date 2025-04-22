@@ -19,6 +19,7 @@ import { ImageUpload } from "@/components/development/utils/image-upload";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
+import { VideoUpload } from "../utils/video-upload";
 
 export const GenreForm = () => {
 
@@ -62,6 +63,23 @@ export const GenreForm = () => {
                                     <Input
                                         {...field}
                                         disabled = {loading}
+                                    />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="color"
+                        render={({field})=>(
+                            <FormItem>
+                                <FormLabel>Color</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        {...field}
+                                        disabled = {loading}
+                                        type="color"
                                     />
                                 </FormControl>
                                 <FormMessage/>

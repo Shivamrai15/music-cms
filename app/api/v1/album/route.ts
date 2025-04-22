@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
-import { AlbumSchema } from "@/schema/album.schema";
+import { generateEmbeddings } from "@/lib/embeddings";
+import { qdarnt } from "@/lib/qdrant";
 import { NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
+
 
 export async function POST ( req: Request ) {
     try {
@@ -14,8 +17,26 @@ export async function POST ( req: Request ) {
                 image,
                 color,
                 release : new Date(release)
+            },
+            include : {
+                songs : true
             }
         });
+
+        const vector = await generateEmbeddings(album.name.toLowerCase());
+        const vectorAlbum = {
+            id: uuidv4(),
+            vector,
+            payload: {
+                id: album.id,
+                name: album.name,
+                songs: album.songs.map(song => song.id),
+                release: album.release,
+                image: album.image,
+                color : album.color
+            }
+        };
+        await qdarnt.upsert("album", { points: [vectorAlbum] });
 
         return NextResponse.json(album);
 

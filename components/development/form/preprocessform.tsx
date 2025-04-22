@@ -72,7 +72,7 @@ export const PreProcessForm = ({
                 <div className="space-y-4">
                     {
                         songs.map((song)=> song.id===form.getValues().id ? (
-                            <div className="w-full space-y-2">
+                            <div className="w-full space-y-2" key={song.id}>
                                 <div className="size-44 rounded-md mx-auto relative">
                                     <Image
                                         src={song.image}
@@ -83,7 +83,7 @@ export const PreProcessForm = ({
                                 <div className="flex items-center justify-center flex-wrap gap-2">
                                     {
                                         song.artists.map((artist)=>(
-                                            <p className="text-sm text-zinc-700 font-medium">
+                                            <p className="text-sm text-zinc-700 font-medium" key={artist.id}>
                                                 {artist.name}
                                             </p>
                                         ))

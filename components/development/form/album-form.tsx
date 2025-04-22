@@ -3,6 +3,7 @@
 import * as z from "zod";
 import axios from "axios";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -24,6 +25,7 @@ import { AlbumSchema } from "@/schema/album.schema";
 export const AlbumForm = () => {
 
     const [loading, setLoading] = useState(false);
+    const router= useRouter();
     
     const form  = useForm<z.infer<typeof AlbumSchema>>({
         resolver : zodResolver(AlbumSchema),
@@ -41,6 +43,7 @@ export const AlbumForm = () => {
             await axios.post("/api/v1/album", values);
             toast.success("Album has been added");
             form.reset();
+            router.refresh();
         } catch (error) {
             console.error(error);
             toast.error("Something went wrong");

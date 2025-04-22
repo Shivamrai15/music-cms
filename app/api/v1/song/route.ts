@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
+import { generateEmbeddings } from "@/lib/embeddings";
+import { qdarnt } from "@/lib/qdrant";
 import { SongSchema } from "@/schema/song.schema";
 import { NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
 
 export async function POST ( req: Request ) {
     try {
@@ -23,6 +26,19 @@ export async function POST ( req: Request ) {
                 }
             }
         });
+
+        const vector = await generateEmbeddings(song.name.toLowerCase());
+        const vectorSong = {
+            id: uuidv4(),
+            vector,
+            payload: { 
+                id: song.id,
+                name: song.name,
+                artists: song.artistIds,
+                album: song.albumId
+            }
+        };
+        await qdarnt.upsert("song", { points: [vectorSong] });
 
         return NextResponse.json(song);
 

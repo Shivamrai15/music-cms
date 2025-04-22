@@ -13,7 +13,9 @@ export async function POST ( req : Request ) {
         }
 
         const genre = await db.genre.create({
-            data : validatedData.data
+            data : {
+                ...validatedData.data,
+            }
         });
 
         return NextResponse.json(genre);
