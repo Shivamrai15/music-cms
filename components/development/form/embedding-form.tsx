@@ -27,7 +27,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Image from "next/image";
-import { Input } from "@/components/ui/input";
 
 
 
@@ -94,11 +93,7 @@ export const EmbeddingsForm = ({
                             <FormItem>
                                 <FormLabel>Song</FormLabel>
                                 <Select
-                                    onValueChange={(value)=>{
-                                        field.onChange(value);
-                                        const trackName = songs.find((song)=>song.id === value)?.name || "";
-                                        window.navigator.clipboard.writeText(trackName);
-                                    }}
+                                    onValueChange={field.onChange}
                                     defaultValue={field.value}
                                     disabled={loading}
                                 > 

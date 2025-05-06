@@ -5,6 +5,8 @@ import { Song } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { LyricsSchema } from "@/schema/lyrics.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Checkbox } from "@/components/ui/checkbox"
+
 
 import {
     Form,
@@ -44,7 +46,8 @@ export const LyricsForm = ({
         resolver : zodResolver(LyricsSchema),
         defaultValues : {
             lyrics : "",
-            songId : ""
+            songId : "",
+            synced : false
         }
     });
 
@@ -79,7 +82,9 @@ export const LyricsForm = ({
                                 <FormLabel className="mr-4">Song</FormLabel>
                                     <Select onValueChange={(value)=>{
                                         field.onChange(value)
-                                        setImage(songs.find((item)=> item.id===value)?.image || "")
+                                        setImage(songs.find((item)=> item.id===value)?.image || "");
+                                        const trackName = songs.find((item)=> item.id===value)?.name || "";
+                                        window.navigator.clipboard.writeText(trackName)
                                     }} defaultValue={field.value}>
                                         <FormControl>
                                         <SelectTrigger>
@@ -96,6 +101,24 @@ export const LyricsForm = ({
                                             }
                                         </SelectContent>
                                     </Select>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="synced"
+                        render={({field})=>(
+                            <FormItem>
+                                <div className="flex items-center my-8">
+                                    <FormLabel className="mr-4">Is song is synced</FormLabel>
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </div>
                                 <FormMessage/>
                             </FormItem>
                         )}

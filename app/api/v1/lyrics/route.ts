@@ -17,7 +17,8 @@ export async function POST ( req : Request ) {
         await db.lyrics.create({
             data : {
                 songId : data.songId,
-                lyrics : JSON.parse(data.lyrics)
+                lyrics : JSON.parse(data.lyrics),
+                synced : data.synced,
             }
         });
 
