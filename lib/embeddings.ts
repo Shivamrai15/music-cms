@@ -1,6 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { genAI } from "./ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "text-embedding-004"});
 
 export const generateEmbeddings = async(text: string)=>{

@@ -1,6 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { generateEmbeddings } from "@/lib/embeddings";
+import { qdarnt } from "@/lib/qdrant";
 
 export const getAllArtist = async() => {
     try {
@@ -32,6 +34,21 @@ export const getArtist  = async()=>{
         return data;
 
     } catch (error) {
+        return null;
+    }
+}
+
+export async function searchArtist (text: string){
+    try {
+        
+        const embedding = await generateEmbeddings(text);
+        const result = await qdarnt.search("artist", {
+            vector : embedding,
+            limit : 1
+        });
+        return result;
+    } catch (error) {
+        console.log("Search song error", error);
         return null;
     }
 }

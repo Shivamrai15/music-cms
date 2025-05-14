@@ -1,7 +1,9 @@
+import { generateSyntheticData } from "@/lib/agent";
 import { db } from "@/lib/db";
 import { generateEmbeddings } from "@/lib/embeddings";
 import { qdarnt } from "@/lib/qdrant";
 import { SongSchema } from "@/schema/song.schema";
+import { searchArtist } from "@/server/artist";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
@@ -16,7 +18,7 @@ export async function POST ( req: Request ) {
         }
 
         const { artistIds, name, ...songData } = validatedData.data;
-
+        
         const song = await db.song.create({
             data : {
                 ...songData,
@@ -24,10 +26,72 @@ export async function POST ( req: Request ) {
                 artists : {
                     connect : artistIds.map(id => ({ id }))
                 }
+            },
+            include : {
+                album : {
+                    select : {
+                        name : true,
+                        release : true,
+                    }
+                },
+                artists : {
+                    select : {
+                        name : true
+                    }
+                }
             }
         });
+        
+        const generatedData = await generateSyntheticData({
+            albumName : song.album.name,
+            songName : song.name,
+            artists : song.artists.map(artist=>artist.name),
+            releaseYear : song.album.release.getFullYear()
+        });
 
-        const vector = await generateEmbeddings(song.name.toLowerCase());
+        let embeddingText = song.name.toLocaleLowerCase();
+
+        if (generatedData) {
+
+            const director = await searchArtist(generatedData.director);
+            let directorId = null;
+            
+            if (director && director[0] && director[0].payload && director[0].score >0.95) {
+                directorId = director[0].payload.id;
+            } else {
+                const newDirector = await db.artist.create({
+                    data : {
+                        name : generatedData.director,
+                        image : "https://res.cloudinary.com/dkaj1swfy/image/upload/v1722023476/uqq2aj7mbyx9huecj2ps.avif",
+                        about : " ",
+                    }
+                });
+                directorId = newDirector.id;
+            }
+
+
+            const metadata = await db.metadata.create({
+                data : {
+                    description : generatedData.description,
+                    explicit : generatedData.explicit,
+                    genre : generatedData.genre,
+                    instrumentation : generatedData.instrumentation,
+                    language : generatedData.language,
+                    mood : generatedData.mood,
+                    tempo : generatedData.tempo,
+                    lyricist : generatedData.lyricist,
+                    directorId : directorId as string,
+                    songId : song.id
+                }
+            });
+
+            const uniqueGenres = new Set([metadata.genre, ...metadata.mood]);
+            const genreAndMood = Array.from(uniqueGenres).join(" ");
+            embeddingText = `${song.name.toLocaleLowerCase()} ${genreAndMood}`.trim();
+
+        }
+
+        const vector = await generateEmbeddings(embeddingText);
         const vectorSong = {
             id: uuidv4(),
             vector,
