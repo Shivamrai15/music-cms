@@ -2,10 +2,14 @@ import { generateSyntheticData } from "@/lib/agent";
 import { db } from "@/lib/db";
 import { generateEmbeddings } from "@/lib/embeddings";
 import { qdarnt } from "@/lib/qdrant";
-import { SongSchema } from "@/schema/song.schema";
-import { searchArtist } from "@/server/artist";
+import { SongSchema } from "@/schema/song.schema";  
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+
+function formatName (moodName: string){
+  const formattedName = moodName.charAt(0).toUpperCase() + moodName.slice(1).toLowerCase();
+  return formattedName;
+}
 
 export async function POST ( req: Request ) {
     try {
@@ -53,39 +57,43 @@ export async function POST ( req: Request ) {
 
         if (generatedData) {
 
-            const director = await searchArtist(generatedData.director);
-            let directorId = null;
-            
-            if (director && director[0] && director[0].payload && director[0].score >0.95) {
-                directorId = director[0].payload.id;
-            } else {
-                const newDirector = await db.artist.create({
-                    data : {
-                        name : generatedData.director,
-                        image : "https://res.cloudinary.com/dkaj1swfy/image/upload/v1722023476/uqq2aj7mbyx9huecj2ps.avif",
-                        about : " ",
-                    }
+            try {
+      
+                const moods = await db.mood.createMany({
+                    data: generatedData.mood.map(mood => ({
+                    name: formatName(mood)
+                    }))
                 });
-                directorId = newDirector.id;
+
+            } catch (error) {
+            
             }
 
-
-            const metadata = await db.metadata.create({
-                data : {
-                    description : generatedData.description,
-                    explicit : generatedData.explicit,
-                    genre : generatedData.genre,
-                    instrumentation : generatedData.instrumentation,
-                    language : generatedData.language,
-                    mood : generatedData.mood,
-                    tempo : generatedData.tempo,
-                    lyricist : generatedData.lyricist,
-                    directorId : directorId as string,
-                    songId : song.id
+            const moodIds = await db.mood.findMany({
+            where : {
+                name : {
+                    in : generatedData.mood.map(mood => formatName(mood))
                 }
+            },
+            select : {
+                id : true,
+                name : true
+            }
             });
 
-            const uniqueGenres = new Set([metadata.genre, ...metadata.mood]);
+            const { mood, ...metadataWithoutMood } = generatedData;
+            
+            const metadata = await db.metadata.create({
+                data : {
+                    songId : song.id,
+                    ...metadataWithoutMood,
+                    moods : {
+                        connect: moodIds.map(mood => ({ id: mood.id }))
+                    }
+                },
+            });
+
+            const uniqueGenres = new Set([metadata.genre, ...moodIds.map(mood => mood.name)]);
             const genreAndMood = Array.from(uniqueGenres).join(" ");
             embeddingText = `${song.name.toLocaleLowerCase()} ${genreAndMood}`.trim();
 
