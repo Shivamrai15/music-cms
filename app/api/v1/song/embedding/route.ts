@@ -25,7 +25,18 @@ export async function POST ( req: Request ) {
                 pointId : id,
             },
             include : {
-                song : true
+                song : {
+                    select : {
+                        name: true,
+                        metadata : {
+                            select : {
+                                moods : true,
+                                genre : true,
+                                language: true
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -34,7 +45,10 @@ export async function POST ( req: Request ) {
             vector : embddingsJson as number[],
             payload : {
                 songId: songId,
-                name : embedding.song.name
+                name : embedding.song.name,
+                genre: embedding.song.metadata?.genre || "",
+                moods: embedding.song.metadata?.moods.map(mood => mood.name) || [],
+                language: embedding.song.metadata?.language || ""
             }
         }
 

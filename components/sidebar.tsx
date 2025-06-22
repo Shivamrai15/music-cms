@@ -69,6 +69,11 @@ export const Sidebar = () => {
             href:"/embeddings",
             name:"Embeddings",
             isActive: pathname === "/embeddings"
+        },
+        {
+            href:"/moods",
+            name:"Moods",
+            isActive: pathname === "/moods"
         }
     ], [pathname]);
 
@@ -112,7 +117,7 @@ export const Sidebar = () => {
             </div>
             <div className="space-y-4">
                 <h2 className="text-sm font-semibold text-zinc-700">Data Entry</h2>
-                <ul className="h-20 w-full flex flex-col items-start text-zinc-700 space-y-0.5">
+                <ul className="w-full flex flex-col items-start text-zinc-700 space-y-0.5">
                     {
                         dataEntryLinks.map((link) => (
                             <Link
