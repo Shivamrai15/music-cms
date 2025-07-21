@@ -112,7 +112,7 @@ export const LabelForm = () => {
                     className="w-full"
                     disabled = {loading}
                 >
-                    Create
+                    {loading ? "Adding..." : "Add Label"}
                 </Button>
             </form>
         </Form>

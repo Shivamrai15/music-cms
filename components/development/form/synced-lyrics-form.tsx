@@ -1,9 +1,13 @@
 "use client";
 
 import * as z from "zod";
+import Image from "next/image";
+import { useState } from "react";
+import { Song } from "@prisma/client";
 import { useForm } from "react-hook-form";
+import { LyricsSchema } from "@/schema/lyrics.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Genre, Song } from "@prisma/client";
+
 
 import {
     Form,
@@ -21,37 +25,37 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select";
-import { useState } from "react";
 import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { GenreSongSchema } from "@/schema/genre-song.schema";
 
-interface GenreSongsFormProps {
-    songs : Song[];
-    genres : Genre[];
+interface LyricsFormProps {
+    songs : Song[]
 }
 
-export const GenreSongsForm = ({
-    genres,
+export const SyncedLyricsForm = ({
     songs
-} : GenreSongsFormProps ) => {
+} : LyricsFormProps ) => {
 
     const [loading, setLoading] = useState(false);
+    const [image, setImage] = useState("");
 
-    const form = useForm<z.infer<typeof GenreSongSchema>>({
-        resolver : zodResolver(GenreSongSchema),
+    const form = useForm<z.infer<typeof LyricsSchema>>({
+        resolver : zodResolver(LyricsSchema),
         defaultValues : {
-            genreId : "",
-            songId : ""
+            lyrics : "",
+            songId : "",
+            synced : true
         }
     });
 
-    const handleForm = async( values : z.infer<typeof GenreSongSchema> ) => {
+    const handleForm = async( values : z.infer<typeof LyricsSchema> ) => {
         try {
             
-            await axios.post("/api/v1/genre/songs", values);
-            toast.success("Song is added")
+            await axios.patch("/api/v1/lyrics", values);
+            toast.success("Lyrics is added")
+            form.reset();
         } catch (error) {
             console.error(error);
             toast.error("Something went wrong");
@@ -61,6 +65,7 @@ export const GenreSongsForm = ({
     }
 
 
+
     return (
         <Form {...form}>
             <form
@@ -68,34 +73,6 @@ export const GenreSongsForm = ({
                 onSubmit={form.handleSubmit(handleForm)}
             >
                 <div className="space-y-3">
-                <FormField
-                        control={form.control}
-                        name="genreId"
-                        render={({field})=>(
-                            <FormItem>
-                                <FormLabel className="mr-4">Genre</FormLabel>
-                                    <Select onValueChange={(value)=>{
-                                        field.onChange(value)
-                                    }} defaultValue={field.value}>
-                                        <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a genre" />
-                                        </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {
-                                                genres.map((genre)=>(
-                                                    <SelectItem key={genre.id} value={genre.id}>
-                                                        {genre.name}
-                                                    </SelectItem>
-                                                ))
-                                            }
-                                        </SelectContent>
-                                    </Select>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
                     <FormField
                         control={form.control}
                         name="songId"
@@ -104,6 +81,9 @@ export const GenreSongsForm = ({
                                 <FormLabel className="mr-4">Song</FormLabel>
                                     <Select onValueChange={(value)=>{
                                         field.onChange(value)
+                                        setImage(songs.find((item)=> item.id===value)?.image || "");
+                                        const trackName = songs.find((item)=> item.id===value)?.name || "";
+                                        window.navigator.clipboard.writeText(trackName)
                                     }} defaultValue={field.value}>
                                         <FormControl>
                                         <SelectTrigger>
@@ -124,13 +104,42 @@ export const GenreSongsForm = ({
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="lyrics"
+                        render={({field})=>(
+                            <FormItem>
+                                <FormLabel className="mr-4">Lyrics</FormLabel>
+                                <FormControl>
+                                    <Textarea
+                                        placeholder="Lyrics of the song"
+                                        className="resize-none"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
                 </div>
+                {
+                    image && (
+                        <div className="h-40 w-40 relative overflow-hidden">
+                            <Image
+                                src={image}
+                                alt="song image"
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+                    )
+                }
                 <Button
                     type="submit"
                     className="w-full"
                     disabled = {loading}
                 >
-                    {loading ? "Adding..." : "Add Genre-Songs"}
+                    Update
                 </Button>
             </form>
         </Form>

@@ -41,9 +41,14 @@ export const Sidebar = () => {
             isActive: pathname === "/lyrics"
         },
         {
-            href:"/update",
-            name:"Update",
-            isActive: pathname === "/update"
+            href:"/synced-lyrics",
+            name:"Synced Lyrics",
+            isActive: pathname === "/synced-lyrics"
+        },
+        {
+            href:"/album-label",
+            name:"Album Label",
+            isActive: pathname === "/album-label"
         },
         {
             href:"/genre-songs",
@@ -74,6 +79,11 @@ export const Sidebar = () => {
             href:"/moods",
             name:"Moods",
             isActive: pathname === "/moods"
+        },
+        {
+            href:"/audio-processing",
+            name:"Audio Processing",
+            isActive: pathname === "/audio-processing"
         }
     ], [pathname]);
 

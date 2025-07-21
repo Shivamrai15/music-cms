@@ -29,3 +29,34 @@ export async function POST ( req : Request ) {
         return new NextResponse("Internal server error", { status:500 })
     }
 }
+
+
+export async function PATCH ( req : Request ) {
+    try {
+
+        const body = await req.json();
+        const isValidated = await LyricsSchema.safeParseAsync(body);
+
+        if (!isValidated.success) {
+            return new NextResponse("Invalid inputs",  { status:400 });
+        }
+
+        const data = isValidated.data;
+
+        await db.lyrics.update({
+            where : {
+                songId : data.songId
+            },
+            data : {
+                lyrics : JSON.parse(data.lyrics),
+                synced : true,
+            }
+        });
+
+        return NextResponse.json({success : true}, { status:200 });
+        
+    } catch (error) {
+        console.log("LYRICS PATCH API ERROR", error);
+        return new NextResponse("Internal server error", { status:500 })
+    }
+}   

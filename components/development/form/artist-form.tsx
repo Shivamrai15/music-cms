@@ -137,7 +137,7 @@ export const ArtistForm = () => {
                     className="w-full"
                     disabled = {loading}
                 >
-                    Create
+                    {loading ? "Adding..." : "Add Artist"}
                 </Button>
             </form>
         </Form>

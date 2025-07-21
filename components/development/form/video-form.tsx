@@ -138,7 +138,7 @@ export const VideoForm = ({ genre }: VideoFormProps) => {
                     />
                 </div>
                 <Button className="w-full" type="submit">
-                    Submit
+                    {loading ? "Adding..." : "Add Video"}
                 </Button>
             </form>
         </Form>

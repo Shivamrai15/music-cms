@@ -149,7 +149,7 @@ export const AdForm = () => {
                     className="w-full"
                     disabled = {loading}
                 >
-                    Create
+                    {loading ? "Adding..." : "Add Advertisement"}
                 </Button>
             </form>
         </Form>

@@ -134,7 +134,7 @@ export const AlbumForm = () => {
                     className="w-full"
                     disabled = {loading}
                 >
-                    Create
+                    {loading ? "Adding..." : "Add Album"}
                 </Button>
             </form>
         </Form>

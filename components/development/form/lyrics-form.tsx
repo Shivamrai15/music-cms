@@ -47,7 +47,7 @@ export const LyricsForm = ({
         defaultValues : {
             lyrics : "",
             songId : "",
-            synced : false
+            synced : true
         }
     });
 
@@ -158,7 +158,7 @@ export const LyricsForm = ({
                     className="w-full"
                     disabled = {loading}
                 >
-                    Add
+                    {loading ? "Adding..." : "Add Lyrics"}
                 </Button>
             </form>
         </Form>

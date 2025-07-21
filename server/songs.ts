@@ -29,6 +29,31 @@ export const getSongs = async () => {
 }
 
 
+export const getSongsWithoutSyncedLyrics = async () => {
+    const lyrics = await db.lyrics.findMany({
+        where : {
+            synced : false
+        },
+        select : {
+            songId : true
+        }
+    });
+
+    const ids = lyrics.map((ly) => ly.songId);
+    const songs = await db.song.findMany({
+        where : {
+            id : {
+                in : ids
+            }
+        },
+        orderBy : {
+            name : "desc"
+        }
+    });
+    return songs;
+}
+
+
 export const getPreProcessSongs = async () => {
     try {
         

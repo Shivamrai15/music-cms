@@ -135,7 +135,7 @@ export const EmbeddingsForm = ({
                     />
                 </div>
                 <Button className="w-full" type="submit" disabled={loading}> 
-                    Submit
+                    {loading ? "Adding..." : "Add Embedding"}
                 </Button>
             </form>
         </Form>

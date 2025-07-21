@@ -110,7 +110,7 @@ export const GenreForm = () => {
                     className="w-full"
                     disabled = {loading}
                 >
-                    Create
+                    {loading ? "Adding..." : "Add Genre"}
                 </Button>
             </form>
         </Form>

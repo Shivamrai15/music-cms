@@ -2,6 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -21,7 +22,6 @@ import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import Image from "next/image";
 
 
 

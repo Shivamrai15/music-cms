@@ -299,7 +299,7 @@ export const SongForm = ({
                     className="w-full"
                     disabled = {loading}
                 >
-                    Create
+                    {loading ? "Adding..." : "Add Song"}
                 </Button>
             </form>
         </Form>

@@ -144,7 +144,7 @@ export const UpdateForm = ({
                     className="w-full"
                     disabled = {loading}
                 >
-                    Update
+                    {loading ? "Updating..." : "Update Album"}
                 </Button>
             </form>
         </Form>
