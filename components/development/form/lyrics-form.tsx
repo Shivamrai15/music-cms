@@ -83,6 +83,7 @@ export const LyricsForm = ({
                                     <Select onValueChange={(value)=>{
                                         field.onChange(value)
                                         setImage(songs.find((item)=> item.id===value)?.image || "");
+                                        console.log(songs.find((item)=> item.id===value))
                                         const trackName = songs.find((item)=> item.id===value)?.name || "";
                                         window.navigator.clipboard.writeText(trackName)
                                     }} defaultValue={field.value}>

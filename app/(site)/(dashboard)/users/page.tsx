@@ -45,7 +45,7 @@ const Page = () => {
 
     
     return (
-        <div className="p-6 h-full w-full flex flex-col gap-y-12">
+        <div className="-6p h-full w-full flex flex-col gap-y-12">
             <h1 className="text-base text-zinc-700 font-semibold">Users</h1>
             <div className="space-y-6 flex flex-col flex-1">
                 <div className="w-full flex-1 relative">
