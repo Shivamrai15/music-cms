@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
         const users = await db.user.findMany({
             orderBy : {
-                name : "asc",
+                createdAt : "desc",
             },
             include : {
                 accounts : {

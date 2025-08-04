@@ -21,7 +21,8 @@ import {
     Video, 
     Brain, 
     Heart, 
-    Headphones 
+    Headphones, 
+    ActivityIcon
 } from "lucide-react";
 
 export const Sidebar = () => {
@@ -122,6 +123,12 @@ export const Sidebar = () => {
     ], [pathname]);
 
     const dashboardLinks = useMemo(()=>[
+        {
+            href : "/analytics",
+            name : "Analytics",
+            icon : ActivityIcon,
+            isActive : pathname === "/analytics"
+        },
         {
             href:"/users",
             name:"Users",

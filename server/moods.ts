@@ -8,6 +8,11 @@ export const getMoods = async ()=> {
         const moods = await db.mood.findMany({
             orderBy : {
                 name : "asc"
+            },
+            where : {
+                color : {
+                    isSet : false
+                }
             }
         });
 
