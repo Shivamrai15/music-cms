@@ -150,7 +150,7 @@ export const Sidebar = () => {
     ], [pathname]);
     
     return (
-        <aside className="w-full h-full space-y-8">
+        <aside className="w-full space-y-8">
             <div className="space-y-4">
                 <h2 className="text-sm font-semibold text-zinc-700">Dashboard</h2>
                 <ul className="w-full flex flex-col items-start text-zinc-700 space-y-0.5">

@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface UpdateFormProps {
     albums : Album[];
@@ -38,8 +39,9 @@ export const UpdateForm = ({
     labels
 } : UpdateFormProps ) => {
 
-    const [loading, setLoading] = useState(false);
+    const router = useRouter();
     const [image, setImage] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const form = useForm<z.infer<typeof UpdateSchema>>({
         resolver : zodResolver(UpdateSchema),
@@ -51,9 +53,11 @@ export const UpdateForm = ({
 
     const handleForm = async( values : z.infer<typeof UpdateSchema> ) => {
         try {
-            
+            setLoading(true);
             await axios.post("/api/v1/update", values);
             toast.success("Successfully Updated");
+            form.reset();
+            router.refresh();
         } catch (error) {
             console.error(error);
             toast.error("Something went wrong");

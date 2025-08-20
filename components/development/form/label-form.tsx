@@ -19,9 +19,11 @@ import { ImageUpload } from "../utils/image-upload";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const LabelForm = () => {
 
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     
     const form  = useForm<z.infer<typeof LabelSchema>>({
@@ -37,6 +39,7 @@ export const LabelForm = () => {
             console.log("API CALLED")
             setLoading(true);
             await axios.post("/api/v1/label", values);
+            router.refresh();
             toast.success("Label has been added");
             form.reset();
         } catch (error) {
